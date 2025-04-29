@@ -17,6 +17,7 @@ builder.Services.AddScoped<MangaRepository>();
 builder.Services.AddScoped<ChapterRepository>();
 builder.Services.AddScoped<PageRepository>();
 builder.Services.AddScoped<CommentRepository>();
+builder.Services.AddScoped<RatingRepository>();
 
 builder.Services.AddSwaggerGen(c =>
 {
