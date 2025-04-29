@@ -11,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<MangaRepository>();
+builder.Services.AddScoped<ChapterRepository>();
+builder.Services.AddScoped<PageRepository>();
 
 var app = builder.Build();
 
