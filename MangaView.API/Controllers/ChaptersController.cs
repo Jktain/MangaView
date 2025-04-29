@@ -1,5 +1,6 @@
 ﻿using MangaView.Api.Models.DTOs;
 using MangaView.Api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MangaView.Api.Controllers;
@@ -22,6 +23,7 @@ public class ChaptersController : ControllerBase
         return Ok(chapters);
     }
 
+    [Authorize]
     [HttpPost("chapters")]
     public async Task<IActionResult> AddChapter([FromBody] CreateChapterDto dto)
     {
