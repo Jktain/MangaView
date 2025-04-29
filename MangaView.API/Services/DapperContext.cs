@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace MangaViewer.Api.Services;
+namespace MangaView.Api.Services;
 
 public class DapperContext
 {
