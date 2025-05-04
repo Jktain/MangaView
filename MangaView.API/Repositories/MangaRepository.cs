@@ -53,7 +53,7 @@ public class MangaRepository
     public async Task<MangaWithGenresDto?> GetMangaByIdAsync(int id)
     {
         var sql = @"
-        SELECT m.Id, m.Title, m.Description, m.CoverUrl, g.Name
+        SELECT m.Id, m.Title, m.Description, m.CoverUrl, m.AverageRating, g.Name
         FROM Manga m
         LEFT JOIN MangaGenres mg ON m.Id = mg.MangaId
         LEFT JOIN Genres g ON mg.GenreId = g.Id

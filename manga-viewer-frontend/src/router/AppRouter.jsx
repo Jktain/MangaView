@@ -4,8 +4,8 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import MangaPage from "../pages/MangaPage";
 import ChapterPage from "../pages/ChapterPage";
-// import AddMangaPage from "../pages/AddMangaPage";
-// import AddChapterPage from "../pages/AddChapterPage";
+import AddMangaPage from "../pages/AddMangaPage";
+import AddChapterPage from "../pages/AddChapterPage";
 import Navbar from "../components/Navbar";
 
 const AppRouter = () => {
@@ -21,6 +21,8 @@ const AppRouter = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/manga/:id" element={<MangaPage />} />
         <Route path="/manga/:mangaId/chapter/:chapterNumber" element={<ChapterPage />} />
+        <Route path="/add-manga" element={<AddMangaPage />} />
+        <Route path="/manga/:id/add-chapter" element={<AddChapterPage />} />
       </Routes>
     </>
   );

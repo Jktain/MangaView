@@ -24,6 +24,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post("/auth/login", form);
+      localStorage.setItem("token", response.data.token); // після логіну
       login(response.data.token); // збереження токена в контекст
       navigate("/"); // редірект на головну
     } catch (err) {

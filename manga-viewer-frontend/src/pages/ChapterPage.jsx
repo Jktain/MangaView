@@ -24,9 +24,6 @@ const ChapterPage = () => {
 
   if (!chapter) return <p>Завантаження...</p>;
 
-  console.log(chapter.imageUrl);
-  console.log(chapter.nextChapterId);
-
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto", textAlign: "center",  justifyContent: "center"}}>
       <h2>

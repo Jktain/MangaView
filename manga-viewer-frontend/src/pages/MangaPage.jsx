@@ -1,6 +1,32 @@
-import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import axiosInstance from "../api/axiosInstance";
+import RatingModal from "../components/RatingModal";
+import { jwtDecode } from "jwt-decode";
+import AuthModal from "../components/AuthModal";
+import { AuthContext } from "../context/AuthContext";
+
+const refreshManga = async (id, value, usId) => {
+  try {
+    await axiosInstance.post(`/ratings`, {
+      userId: usId,
+      mangaId: parseInt(id),
+      score: value,
+    });
+    const res = await axiosInstance.get(`/manga/${id}`);
+  } catch (err) {
+    console.error("Помилка оцінювання:", err);
+  }
+};
+
+const getUserIdFromToken = () => {
+  const token = localStorage.getItem("token");
+  if(token){
+    const decoded = jwtDecode(token);
+    return Number(decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
+  } 
+  else return null;
+}
 
 const MangaPage = () => {
   const { id } = useParams();
@@ -9,11 +35,18 @@ const MangaPage = () => {
   const [comments, setComments] = useState([]);
   const [activeTab, setActiveTab] = useState("chapters");
   const [commentText, setCommentText] = useState("");
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [averageRating, setAverageRating] = useState(0);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const userId = getUserIdFromToken();
 
   useEffect(() => {
     axiosInstance.get(`/manga/${id}`).then((res) => setManga(res.data));
     axiosInstance.get(`/manga/${id}/chapters`).then((res) => setChapters(res.data));
     axiosInstance.get(`/manga/${id}/comments`).then((res) => setComments(res.data));
+    axiosInstance.get(`/manga/${id}/rating`).then((res) => setAverageRating(res.data));
   }, [id]);
 
   const handleAddComment = async () => {
@@ -37,12 +70,30 @@ const MangaPage = () => {
   return (
     <div style={{ display: "flex", padding: "20px", gap: "40px" }}>
       {/* Обкладинка */}
-      <div>
+      <div style={{ width: "350px"}}>
         <img
           src={manga.coverUrl || "https://via.placeholder.com/200x300"}
           alt={manga.title}
-          style={{ width: "350px", height: "550px", objectFit: "cover" }}
+          style={{ width: "300px", height: "500px", objectFit: "cover" }}
         />
+        <button
+          onClick={() => {
+            if (!isAuthenticated) setShowAuthModal(true);
+            else navigate(`/manga/${id}/add-chapter`);
+          }}
+          style={{ marginTop: "20px", width: "300px", padding: "10px" }}
+        >
+          ➕ Додати главу
+        </button>
+        <button
+          onClick={() => {
+            if (!isAuthenticated) setShowAuthModal(true);
+            else setShowRatingModal(true)
+          }}
+          style={{ width: "300px", padding: "8px 12px", marginTop: "10px" }}
+        >
+          {averageRating.averageRating.toFixed(1) || "Оцінити"}⭐
+        </button>
       </div>
 
       {/* Контент */}
@@ -91,8 +142,11 @@ const MangaPage = () => {
               placeholder="Напишіть коментар..."
               style={{ width: "100%", marginBottom: "10px" }}
             />
-            <button onClick={handleAddComment}>Надіслати</button>
-
+            <button onClick={() => {
+              if (!isAuthenticated) setShowAuthModal(true);
+              handleAddComment
+              }}
+            >Надіслати</button>
             <div style={{ marginTop: "20px" }}>
               {comments.map((c) => (
                 <div key={c.id} style={{ marginBottom: "15px" }}>
@@ -107,6 +161,15 @@ const MangaPage = () => {
           </div>
         )}
       </div>
+      {showRatingModal && (
+        <RatingModal
+          onClose={() => setShowRatingModal(false)}
+          onRatingSubmitted={refreshManga}
+          mangaId={id}
+          userId={userId}
+        />
+      )}
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
     </div>
   );
 };

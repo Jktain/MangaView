@@ -7,7 +7,7 @@ const MangaCard = ({ manga }) => {
         <img
           src={manga.coverUrl || "/no-cover.jpg"}
           alt={manga.title}
-          style={{ width: "100%", height: "280px", objectFit: "cover", borderRadius: "8px" }}
+          style={{ width: "100%", height: "350px", objectFit: "cover", borderRadius: "8px" }}
         />
         <div style={{ marginTop: "10px", fontWeight: "bold", fontSize: "16px", textAlign: "center" }}>
           {manga.title.length > 35 ? manga.title.slice(0, 35) + "..." : manga.title}
