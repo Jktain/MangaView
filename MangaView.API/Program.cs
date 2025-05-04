@@ -1,5 +1,6 @@
 using MangaView.Api.Repositories;
 using MangaView.Api.Services;
+using MangaView.API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -15,9 +16,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<MangaRepository>();
 builder.Services.AddScoped<ChapterRepository>();
-builder.Services.AddScoped<PageRepository>();
 builder.Services.AddScoped<CommentRepository>();
 builder.Services.AddScoped<RatingRepository>();
+builder.Services.AddScoped<GenreRepository>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -83,6 +94,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 

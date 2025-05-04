@@ -2,6 +2,7 @@
 using MangaView.Api.Models;
 using MangaView.Api.Models.DTOs;
 using MangaView.Api.Services;
+using MangaView.API.Models.DTO_s;
 
 namespace MangaView.Api.Repositories;
 
@@ -26,11 +27,16 @@ public class CommentRepository
         return await connection.ExecuteScalarAsync<int>(query, new { UserId = userId, dto.MangaId, dto.Content });
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByMangaIdAsync(int mangaId)
+    public async Task<IEnumerable<CommentWithUserDto>> GetCommentsByMangaIdAsync(int mangaId)
     {
-        var query = "SELECT * FROM Comments WHERE MangaId = @MangaId ORDER BY CreatedAt DESC";
+        var query = @"
+            SELECT c.Id, c.Content, u.Username, c.CreatedAt
+            FROM Comments c 
+            LEFT JOIN Users u ON c.UserId = u.Id
+            WHERE c.MangaId = @MangaId 
+            ORDER BY CreatedAt DESC";
 
         using var connection = _context.CreateConnection();
-        return await connection.QueryAsync<Comment>(query, new { MangaId = mangaId });
+        return await connection.QueryAsync<CommentWithUserDto>(query, new { MangaId = mangaId });
     }
 }

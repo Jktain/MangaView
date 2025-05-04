@@ -2,9 +2,10 @@
 
 public class Chapter
 {
-    public int Id { get; set; } // Первинний ключ
-    public int MangaId { get; set; } // Зовнішній ключ на Manga
-    public float ChapterNumber { get; set; } // Номер глави (може бути 4.5, тому float)
-    public string? Title { get; set; } // Назва глави (опціонально)
-    public DateTime CreatedAt { get; set; } // Дата створення глави
+    public int Id { get; set; }                      
+    public int MangaId { get; set; }               
+    public float ChapterNumber { get; set; }       
+    public string? Title { get; set; }              
+    public DateTime CreatedAt { get; set; }          
+    public string ImageUrl { get; set; }            
 }

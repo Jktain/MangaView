@@ -30,12 +30,12 @@ public class AuthService
             return false; // Користувач уже існує
 
         var insertQuery = @"
-            INSERT INTO Users (Email, PasswordHash)
-            VALUES (@Email, @PasswordHash)";
+            INSERT INTO Users (Email, Username, PasswordHash)
+            VALUES (@Email, @Username, @PasswordHash)";
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-        await connection.ExecuteAsync(insertQuery, new { dto.Email, PasswordHash = passwordHash });
+        await connection.ExecuteAsync(insertQuery, new { dto.Email, dto.Username, PasswordHash = passwordHash });
         return true;
     }
 

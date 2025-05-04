@@ -16,6 +16,13 @@ public class ChaptersController : ControllerBase
         _repository = repository;
     }
 
+    [HttpGet("chapters/{mangaId}/number/{chapterNumber}")]
+    public async Task<IActionResult> GetChapterByNumber(int mangaId, float chapterNumber)
+    {
+        var chapter = await _repository.GetChapterByMangaAndNumberAsync(mangaId, chapterNumber);
+        return chapter == null ? NotFound() : Ok(chapter);
+    }
+
     [HttpGet("manga/{mangaId}/chapters")]
     public async Task<IActionResult> GetChapters(int mangaId)
     {
