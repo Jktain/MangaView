@@ -1,4 +1,4 @@
-INSERT INTO Genres (Name) VALUES 
+INSERT INTO [MangaViewerDb].[dbo].[Genres] (Name) VALUES 
 ('Романтика'),
 ('Сьодзе'),
 ('Бойовик'),

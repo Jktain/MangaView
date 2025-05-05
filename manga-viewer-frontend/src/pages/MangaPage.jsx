@@ -44,12 +44,14 @@ const MangaPage = () => {
   const userId = getUserIdFromToken();
 
   useEffect(() => {
+    axiosInstance.get(`/manga/${id}/rating`).then((res) => setAverageRating(res.data));
     axiosInstance.get(`/manga/${id}`).then((res) => setManga(res.data));
     axiosInstance.get(`/manga/${id}/chapters`).then((res) => setChapters(res.data));
     axiosInstance.get(`/manga/${id}/comments`).then((res) => setComments(res.data));
-    axiosInstance.get(`/manga/${id}/rating`).then((res) => setAverageRating(res.data));
     axiosInstance.get(`/manga/${id}/similar`).then(res => setSimilarManga(res.data));
   }, [id]);
+
+  console.log(averageRating.averageRating);
 
   const handleAddComment = async () => {
     if (!commentText.trim()) return;
@@ -173,7 +175,7 @@ const MangaPage = () => {
             />
             <button onClick={() => {
               if (!isAuthenticated) setShowAuthModal(true);
-              handleAddComment
+              else handleAddComment()
               }}
             >Надіслати</button>
             <div style={{ marginTop: "20px" }}>
