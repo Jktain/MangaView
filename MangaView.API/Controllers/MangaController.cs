@@ -35,6 +35,13 @@ public class MangaController : ControllerBase
         return Ok(manga);
     }
 
+    [HttpGet("{id}/similar")]
+    public async Task<IActionResult> GetSimilarManga(int id)
+    {
+        var similar = await _repository.GetSimilarMangaAsync(id);
+        return Ok(similar);
+    }
+
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddManga([FromBody] CreateMangaDto dto)

@@ -3,6 +3,7 @@ using MangaView.Api.Models;
 using MangaView.Api.Models.DTO_s;
 using MangaView.Api.Models.DTOs;
 using MangaView.Api.Services;
+using Microsoft.Data.SqlClient;
 
 namespace MangaView.Api.Repositories;
 
@@ -86,6 +87,34 @@ public class MangaRepository
         return mangaDict.Values.FirstOrDefault();
     }
 
+    public async Task<IEnumerable<MangaWithGenresDto>> GetSimilarMangaAsync(int mangaId)
+    {
+        var query = @"
+        SELECT DISTINCT m.Id, m.Title, m.Description, m.CoverUrl
+        FROM Manga m
+        JOIN MangaGenres mg ON m.Id = mg.MangaId
+        WHERE mg.GenreId IN (
+            SELECT GenreId FROM MangaGenres WHERE MangaId = @MangaId
+        )
+        AND m.Id != @MangaId";
+
+        using var connection = _context.CreateConnection();
+        var mangaList = await connection.QueryAsync<MangaWithGenresDto>(query, new { MangaId = mangaId });
+
+        // опціонально: для кожної манги підтягти жанри
+        foreach (var manga in mangaList)
+        {
+            var genres = await connection.QueryAsync<string>(
+                @"SELECT g.Name
+              FROM Genres g
+              JOIN MangaGenres mg ON g.Id = mg.GenreId
+              WHERE mg.MangaId = @MangaId", new { MangaId = manga.Id });
+            manga.Genres = genres.ToList();
+        }
+
+        return mangaList;
+    }
+
 
     public async Task<int> AddMangaAsync(CreateMangaDto dto)
     {
@@ -95,6 +124,7 @@ public class MangaRepository
         SELECT CAST(SCOPE_IDENTITY() as int);";
 
         using var connection = _context.CreateConnection();
+        await ((SqlConnection)connection).OpenAsync(); // ← Cast до SqlConnection
         using var transaction = connection.BeginTransaction();
 
         try

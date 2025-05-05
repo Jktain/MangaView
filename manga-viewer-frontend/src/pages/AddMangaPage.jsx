@@ -28,7 +28,7 @@ const AddMangaPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/manga", {
+      await axios.post("/Manga", {
         title,
         description,
         coverUrl,

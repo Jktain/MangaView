@@ -39,6 +39,7 @@ const MangaPage = () => {
   const [averageRating, setAverageRating] = useState(0);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
+  const [similarManga, setSimilarManga] = useState([]);
   const navigate = useNavigate();
   const userId = getUserIdFromToken();
 
@@ -47,6 +48,7 @@ const MangaPage = () => {
     axiosInstance.get(`/manga/${id}/chapters`).then((res) => setChapters(res.data));
     axiosInstance.get(`/manga/${id}/comments`).then((res) => setComments(res.data));
     axiosInstance.get(`/manga/${id}/rating`).then((res) => setAverageRating(res.data));
+    axiosInstance.get(`/manga/${id}/similar`).then(res => setSimilarManga(res.data));
   }, [id]);
 
   const handleAddComment = async () => {
@@ -116,7 +118,34 @@ const MangaPage = () => {
               </p>
             )}
             <p style={{ whiteSpace: "pre-wrap" }}>{manga.description || "Опис відсутній."}</p>
+            {similarManga.length > 0 && (
+              <div style={{ marginTop: "40px" }}>
+                <h2>Схоже за жанрами</h2>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                  gap: "20px",
+                  marginTop: "20px"
+                }}>
+                  {similarManga.map(similar => (
+                    <Link to={`/manga/${similar.id}`} key={similar.id} style={{ textDecoration: "none", color: "inherit" }}>
+                      <div style={{ background: "#222", borderRadius: "8px", padding: "10px" }}>
+                        <img
+                          src={similar.coverUrl || "/no-cover.jpg"}
+                          alt={similar.title}
+                          style={{ width: "100%", height: "220px", objectFit: "cover", borderRadius: "6px" }}
+                        />
+                        <div style={{ marginTop: "8px", fontWeight: "bold", fontSize: "14px" }}>
+                          {similar.title}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+          
         )}
 
         {activeTab === "chapters" && (
@@ -160,7 +189,10 @@ const MangaPage = () => {
             </div>
           </div>
         )}
+        
       </div>
+      
+
       {showRatingModal && (
         <RatingModal
           onClose={() => setShowRatingModal(false)}
