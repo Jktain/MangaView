@@ -6,19 +6,6 @@ import { jwtDecode } from "jwt-decode";
 import AuthModal from "../components/AuthModal";
 import { AuthContext } from "../context/AuthContext";
 
-const refreshManga = async (id, value, usId) => {
-  try {
-    await axiosInstance.post(`/ratings`, {
-      userId: usId,
-      mangaId: parseInt(id),
-      score: value,
-    });
-    const res = await axiosInstance.get(`/manga/${id}`);
-  } catch (err) {
-    console.error("Помилка оцінювання:", err);
-  }
-};
-
 const getUserIdFromToken = () => {
   const token = localStorage.getItem("token");
   if(token){
@@ -51,7 +38,20 @@ const MangaPage = () => {
     axiosInstance.get(`/manga/${id}/similar`).then(res => setSimilarManga(res.data));
   }, [id]);
 
-  console.log(averageRating.averageRating);
+  const refreshManga = async (id, value, usId) => {
+    try {
+      await axiosInstance.post(`/ratings`, {
+        userId: usId,
+        mangaId: parseInt(id),
+        score: value,
+      });
+      const res = await axiosInstance.get(`/manga/${id}`);
+      setManga(res.data);
+      setShowRatingModal(false);
+    } catch (err) {
+      console.error("Помилка оцінювання:", err);
+    }
+  };
 
   const handleAddComment = async () => {
     if (!commentText.trim()) return;
@@ -96,7 +96,7 @@ const MangaPage = () => {
           }}
           style={{ width: "300px", padding: "8px 12px", marginTop: "10px" }}
         >
-          {averageRating.averageRating.toFixed(1) || "Оцінити"}⭐
+          {averageRating.averageRating || "Оцінити"}⭐
         </button>
       </div>
 

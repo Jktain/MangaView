@@ -33,7 +33,7 @@ const RatingModal = ({ onClose, onRatingSubmitted, mangaId, userId }) => {
 
         <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
           <button onClick={onClose} style={button}>Скасувати</button>
-          <button onClick={() => {onRatingSubmitted(mangaId, selected, userId); onClose()}} style={buttonPrimary}>Підтвердити</button>
+          <button onClick={() => onRatingSubmitted(mangaId, selected, userId)} style={buttonPrimary}>Підтвердити</button>
         </div>
       </div>
     </div>
